@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { ConnectFinquButton } from "../components/finqu-connect-button";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -13,6 +14,7 @@ export default async function DashboardPage() {
     <div>
       <h1>Welcome to your dashboard, {session.user?.name}!</h1>
       <p>Email: {session.user?.email}</p>
+      <ConnectFinquButton />
     </div>
   );
 }
