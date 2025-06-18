@@ -21,9 +21,6 @@ export async function GET(
     return NextResponse.json({ error: "Finqu not connected" }, { status: 400 });
   }
 
-  //const { searchParams } = new URL(request.url);
-  //const productId = searchParams.get("productId");
-
   const { productId } = await params;
 
   const res = await fetch(

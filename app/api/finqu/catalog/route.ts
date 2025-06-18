@@ -1,12 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(request: Request) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { productId: string } }
+) {
   const session = await getServerSession(authOptions);
-
-  console.log(session?.user?.email);
 
   if (!session || !session.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -30,6 +31,7 @@ export async function GET(request: Request) {
       headers: {
         Authorization: `Bearer ${user.finquAccessToken}`,
       },
+      cache: "force-cache",
     }
   );
 
