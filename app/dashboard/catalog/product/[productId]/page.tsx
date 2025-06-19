@@ -19,9 +19,8 @@ export default async function ProductPage({
   const { productId } = await params;
 
   return (
-    <div className="max-w-[1200px] mx-auto">
-      <Link href="/dashboard/catalog">← Back to catalog</Link>
+    <main className="max-w-[800px] mx-auto p-2">
       <Product productId={`${productId}`} />
-    </div>
+    </main>
   );
 }

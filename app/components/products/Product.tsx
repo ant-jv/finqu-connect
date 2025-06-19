@@ -1,16 +1,39 @@
 "use client";
 import { useEffect, useState } from "react";
 import BasicInformation from "./product-elements/BasicInformation";
+import type { Product } from "@/types/product";
+import ProductSkeleton from "./ProductSkeleton";
+import { HeaderActions } from "../layout/HeaderActions";
 
 type productId = string;
-
-interface Product {
-  name: string;
-}
 
 export default function Product(props: { productId: productId }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const saveProduct = async () => {
+    setIsSaving(true);
+
+    try {
+      const res = await fetch("/api/save-product", {
+        method: "POST",
+        body: JSON.stringify({
+          /* data */
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) throw new Error("Failed to save");
+      // maybe redirect or show success
+    } catch (error) {
+      console.error("Save failed", error);
+    } finally {
+      setTimeout(() => {
+        setIsSaving(false);
+      }, 2000);
+    }
+  };
 
   useEffect(() => {
     async function fetchProduct() {
@@ -32,16 +55,21 @@ export default function Product(props: { productId: productId }) {
     fetchProduct();
   }, [props.productId]);
 
-  return (
-    <div className="max-w-[1200px] mx-auto">
-      <div className="flex gap-4">
-        <div className="w-[60%] p-4">
-          {product && <BasicInformation product={{ name: product.name }} />}
-        </div>
-        <div className="w-[40%] p-4">Testi oikea</div>
-      </div>
-
-      <pre>{JSON.stringify(product, null, 2)}</pre>
+  return loading ? (
+    <ProductSkeleton />
+  ) : (
+    <div className="max-w-[800px]">
+      {product && (
+        <>
+          <HeaderActions
+            backHref="/dashboard/catalog"
+            onSave={saveProduct}
+            isSaving={isSaving}
+          />
+          <BasicInformation product={{ name: product.name }} />
+          {/*<pre>{JSON.stringify(product, null, 2)}</pre>*/}
+        </>
+      )}
     </div>
   );
 }
