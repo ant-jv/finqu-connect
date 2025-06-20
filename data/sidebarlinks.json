@@ -9,7 +9,7 @@
     {
       "id": 2,
       "title": "Products",
-      "path": "/dashboard/catalog",
+      "path": "/dashboard/products",
       "icon": "🏷️"
     },
     {

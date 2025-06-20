@@ -51,7 +51,7 @@ export default async function ProductList() {
                 className="py-3 flex items-center justify-between hover:bg-gray-50"
               >
                 <Link
-                  href={`/dashboard/catalog/product/${product.id}`}
+                  href={`/dashboard/product/${product.id}`}
                   className="flex items-center justify-between w-full"
                 >
                   <div className="flex items-center">

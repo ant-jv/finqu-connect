@@ -62,12 +62,12 @@ export default function Product(props: { productId: productId }) {
       {product && (
         <>
           <HeaderActions
-            backHref="/dashboard/catalog"
+            backHref="/dashboard/products"
             onSave={saveProduct}
             isSaving={isSaving}
           />
           <BasicInformation product={{ name: product.name }} />
-          {/*<pre>{JSON.stringify(product, null, 2)}</pre>*/}
+          {<pre>{JSON.stringify(product, null, 2)}</pre>}
         </>
       )}
     </div>

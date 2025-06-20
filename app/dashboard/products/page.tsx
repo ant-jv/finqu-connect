@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import ProductList from "@/app/components/products/productlist";
 import { Suspense } from "react";
-import ProductListSkeleton from "@/app/components/products/productlist-skeleton";
+import ProductListSkeleton from "@/app/components/products/ProductlistSkeleton";
 
 export default async function ProductsPage() {
   const session = await getServerSession(authOptions);
