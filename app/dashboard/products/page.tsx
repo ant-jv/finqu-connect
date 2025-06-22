@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import ProductList from "@/app/components/products/productlist";
+import ProductList from "@/app/components/products/Productlist";
 import { Suspense } from "react";
 import ProductListSkeleton from "@/app/components/products/ProductlistSkeleton";
 

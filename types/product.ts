@@ -185,7 +185,7 @@ export interface Product {
   attachments: any[];
   combined_listing: any[];
   locales: {
-    fi: {
+    [lang: string]: {
       name: string;
       summary: string;
       description: string;

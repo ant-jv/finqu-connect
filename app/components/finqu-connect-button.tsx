@@ -3,7 +3,7 @@ export function ConnectFinquButton() {
     response_type: "code",
     client_id: process.env.FINQU_CLIENT_ID!,
     redirect_uri: process.env.FINQU_REDIRECT_URI!,
-    scope: "products_read orders_write", // choose scopes wisely
+    scope: "products_read products_write orders_write", // choose scopes wisely
     state: crypto.randomUUID(),
   });
 

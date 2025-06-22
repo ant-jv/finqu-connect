@@ -16,13 +16,14 @@ export default function Product(props: { productId: productId }) {
     setIsSaving(true);
 
     try {
-      const res = await fetch("/api/save-product", {
-        method: "POST",
-        body: JSON.stringify({
-          /* data */
-        }),
-        headers: { "Content-Type": "application/json" },
-      });
+      const res = await fetch(
+        `/api/finqu/catalog/product/update/${props.productId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(product),
+        }
+      );
 
       if (!res.ok) throw new Error("Failed to save");
       // maybe redirect or show success
@@ -43,7 +44,6 @@ export default function Product(props: { productId: productId }) {
         );
         if (!res.ok) throw new Error("Failed to fetch product");
         const data = await res.json();
-        console.log("TESTIÄ 2", data);
         setProduct(data);
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -66,7 +66,8 @@ export default function Product(props: { productId: productId }) {
             onSave={saveProduct}
             isSaving={isSaving}
           />
-          <BasicInformation product={{ name: product.name }} />
+          <h2 className="text-md font-semibold mb-2">Name and description</h2>
+          <BasicInformation product={product} onChange={setProduct} />
           {<pre>{JSON.stringify(product, null, 2)}</pre>}
         </>
       )}

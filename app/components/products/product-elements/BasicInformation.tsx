@@ -1,21 +1,15 @@
 "use client";
 
+import type { Product } from "@/types/product";
+import InputWrapper from "../../layout/forms/inputs/InputWrapper";
+
 type Props = {
-  product: {
-    name: string;
-  };
+  product: Product;
+  onChange: (updated: Product) => void;
 };
 
-export default function BasicInformation(props: Props) {
+export default function BasicInformation({ product, onChange }: Props) {
   return (
-    <div className="p-4 bg-white rounded-md">
-      <label htmlFor="product-name">Nimi</label>
-      <input
-        className="input-style"
-        type="text"
-        name="product-name"
-        defaultValue={props.product.name}
-      />
-    </div>
+    <InputWrapper product={product} type={"localized"} onChange={onChange} />
   );
 }
