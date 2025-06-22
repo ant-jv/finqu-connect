@@ -5,12 +5,15 @@ import type { Product } from "@/types/product";
 import ProductSkeleton from "./ProductSkeleton";
 import { HeaderActions } from "../layout/HeaderActions";
 
+import { useProductStore } from "@/lib/stores/productStore";
+
 type productId = string;
 
 export default function Product(props: { productId: productId }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const { updateProduct } = useProductStore();
 
   const saveProduct = async () => {
     setIsSaving(true);
@@ -26,13 +29,16 @@ export default function Product(props: { productId: productId }) {
       );
 
       if (!res.ok) throw new Error("Failed to save");
+
+      const updatedProduct: Product = await res.json();
+
+      updateProduct(updatedProduct); // Update in global state
+
       // maybe redirect or show success
     } catch (error) {
       console.error("Save failed", error);
     } finally {
-      setTimeout(() => {
-        setIsSaving(false);
-      }, 2000);
+      setIsSaving(false);
     }
   };
 

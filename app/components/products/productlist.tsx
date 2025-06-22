@@ -1,39 +1,22 @@
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { ConnectFinquButton } from "@/app/components/finqu-connect-button";
-import { headers } from "next/headers";
+"use client";
+
 import Link from "next/link";
+import { useEffect } from "react";
+import { useProductStore } from "@/lib/stores/productStore";
 
-export default async function ProductList() {
-  const session = await getServerSession(authOptions);
+export default function ProductList() {
+  const { products, setProducts } = useProductStore();
 
-  if (!session || !session.user?.email) {
-    redirect("/login");
-  }
-
-  const headerValues = await headers();
-  console.time("Tuotteiden haku");
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/finqu/catalog?page=1&limit=50`,
-    {
-      headers: headerValues,
-    }
-  );
-  console.timeEnd("Tuotteiden haku");
-
-  const products = await res.json();
-
-  if (!res.ok) {
-    return (
-      <div>
-        <h1>Welcome to your dashboard, {session.user?.name}!</h1>
-        <p>Email: {session.user?.email}</p>
-        <ConnectFinquButton />
-        {res.status === 400 && <p>Please connect your Finqu account first.</p>}
-      </div>
-    );
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/finqu/catalog?page=1&limit=50`
+      );
+      const data = await res.json();
+      setProducts(data);
+    };
+    fetchData();
+  }, [setProducts]);
 
   return (
     <>

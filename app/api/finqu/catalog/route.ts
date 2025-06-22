@@ -31,7 +31,7 @@ export async function GET(
       headers: {
         Authorization: `Bearer ${user.finquAccessToken}`,
       },
-      cache: "force-cache",
+      //cache: "force-cache",
       //cache: "no-store",
     }
   );
