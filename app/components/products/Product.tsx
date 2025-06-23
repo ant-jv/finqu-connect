@@ -19,20 +19,62 @@ export default function Product(props: { productId: productId }) {
     setIsSaving(true);
 
     try {
+      //Check if title or url slug are null and populate them with product name before saving the product.
+      let productToSave: Product | null = null;
+
+      if (product) {
+        const updatedLocales = { ...product.locales };
+        Object.entries(updatedLocales).forEach(([locale, fields]) => {
+          if (fields) {
+            if (!fields.seo_title && fields.name) {
+              fields.seo_title = fields.name;
+            }
+            if (!fields.url_slug && fields.name) {
+              fields.url_slug = fields.name
+                .toLowerCase()
+                .replace(/\s+/g, "-")
+                .replace(/[^a-z0-9\-]/g, "")
+                .replace(/\-+/g, "-")
+                .replace(/^\-+|\-+$/g, "");
+            }
+            if (!fields.description && fields.name) {
+              fields.description = "";
+            }
+            if (!fields.seo_description && fields.name) {
+              fields.seo_description = "";
+            }
+            if (!fields.summary && fields.name) {
+              fields.summary = "";
+            }
+            if (!fields.seo_keywords && fields.name) {
+              fields.seo_keywords = "";
+            }
+          }
+        });
+
+        productToSave = {
+          ...product,
+          seo_keywords: product.seo_keywords ?? "",
+          locales: updatedLocales,
+        };
+
+        setProduct(productToSave);
+      }
+
       const res = await fetch(
         `/api/finqu/catalog/product/update/${props.productId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(product),
+          body: JSON.stringify(productToSave),
         }
       );
 
       if (!res.ok) throw new Error("Failed to save");
 
-      const updatedProduct: Product = await res.json();
+      const savedProduct: Product = await res.json();
 
-      updateProduct(updatedProduct); // Update in global state
+      updateProduct(savedProduct); // Update in global state
 
       // maybe redirect or show success
     } catch (error) {
