@@ -2,16 +2,16 @@
 import { useEffect, useState } from "react";
 import BasicInformation from "./product-elements/BasicInformation";
 import type { Product } from "@/types/product";
-import ProductSkeleton from "./ProductSkeleton";
 import { HeaderActions } from "../layout/HeaderActions";
 
 import { useProductStore } from "@/lib/stores/productStore";
+import { prepareProductForSave } from "@/lib/utils/prepareProduct";
 
 type productId = string;
 
 export default function Product(props: { productId: productId }) {
   const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { updateProduct } = useProductStore();
 
@@ -19,47 +19,11 @@ export default function Product(props: { productId: productId }) {
     setIsSaving(true);
 
     try {
-      //Check if title or url slug are null and populate them with product name before saving the product.
-      let productToSave: Product | null = null;
+      if (!product) return;
 
-      if (product) {
-        const updatedLocales = { ...product.locales };
-        Object.entries(updatedLocales).forEach(([locale, fields]) => {
-          if (fields) {
-            if (!fields.seo_title && fields.name) {
-              fields.seo_title = fields.name;
-            }
-            if (!fields.url_slug && fields.name) {
-              fields.url_slug = fields.name
-                .toLowerCase()
-                .replace(/\s+/g, "-")
-                .replace(/[^a-z0-9\-]/g, "")
-                .replace(/\-+/g, "-")
-                .replace(/^\-+|\-+$/g, "");
-            }
-            if (!fields.description && fields.name) {
-              fields.description = "";
-            }
-            if (!fields.seo_description && fields.name) {
-              fields.seo_description = "";
-            }
-            if (!fields.summary && fields.name) {
-              fields.summary = "";
-            }
-            if (!fields.seo_keywords && fields.name) {
-              fields.seo_keywords = "";
-            }
-          }
-        });
-
-        productToSave = {
-          ...product,
-          seo_keywords: product.seo_keywords ?? "",
-          locales: updatedLocales,
-        };
-
-        setProduct(productToSave);
-      }
+      //Special thing to avoid 422 error if user has changed default lang in Finqu.
+      const productToSave = prepareProductForSave(product);
+      setProduct(productToSave);
 
       const res = await fetch(
         `/api/finqu/catalog/product/update/${props.productId}`,
@@ -73,10 +37,7 @@ export default function Product(props: { productId: productId }) {
       if (!res.ok) throw new Error("Failed to save");
 
       const savedProduct: Product = await res.json();
-
-      updateProduct(savedProduct); // Update in global state
-
-      // maybe redirect or show success
+      updateProduct(savedProduct);
     } catch (error) {
       console.error("Save failed", error);
     } finally {
@@ -86,6 +47,7 @@ export default function Product(props: { productId: productId }) {
 
   useEffect(() => {
     async function fetchProduct() {
+      setLoading(true);
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}/api/finqu/catalog/product/${props.productId}`
@@ -103,22 +65,28 @@ export default function Product(props: { productId: productId }) {
     fetchProduct();
   }, [props.productId]);
 
-  return loading ? (
-    <ProductSkeleton />
-  ) : (
+  return (
     <div className="max-w-[800px]">
-      {product && (
-        <>
-          <HeaderActions
-            backHref="/dashboard/products"
-            onSave={saveProduct}
-            isSaving={isSaving}
-          />
-          <h2 className="text-md font-semibold mb-2">Name and description</h2>
-          <BasicInformation product={product} onChange={setProduct} />
-          {<pre>{JSON.stringify(product, null, 2)}</pre>}
-        </>
-      )}
+      <>
+        <HeaderActions
+          backHref="/dashboard/products"
+          onSave={saveProduct}
+          isSaving={isSaving}
+        />
+        {loading ? (
+          <p className="text-red-500 px-4 py-6">PRODUCT SKELETON GOES HERE</p>
+        ) : (
+          product && (
+            <>
+              <h2 className="text-md font-semibold mb-2">
+                Name and description
+              </h2>
+              <BasicInformation product={product} onChange={setProduct} />
+              <pre>{JSON.stringify(product, null, 2)}</pre>
+            </>
+          )
+        )}
+      </>
     </div>
   );
 }

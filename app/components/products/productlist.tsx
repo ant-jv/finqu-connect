@@ -1,24 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useProductStore } from "@/lib/stores/productStore";
+import ListItem from "../layout/ListItem";
 
 export default function ProductList() {
   const { products, setProducts } = useProductStore();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (products.length === 0) {
       const fetchData = async () => {
+        setLoading(true);
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}/api/finqu/catalog?page=1&limit=50`
         );
         const data = await res.json();
         setProducts(data);
+        setLoading(false);
       };
       fetchData();
     }
   }, []);
+
+  if (loading) {
+    return <p className="text-gray-600 px-4 py-6">Loading products...</p>;
+  }
 
   return (
     <>
@@ -31,25 +39,15 @@ export default function ProductList() {
             const priceWithVat = basePrice * (1 + taxRate / 100);
 
             return (
-              <li
+              <ListItem
                 key={product.id}
-                className="py-3 flex items-center justify-between hover:bg-gray-50"
-              >
-                <Link
-                  href={`/dashboard/product/${product.id}`}
-                  className="flex items-center justify-between w-full"
-                >
-                  <div className="flex items-center">
-                    <span className="ml-3">{product.name}</span>
-                  </div>
-                  <span className="text-gray-600">
-                    {new Intl.NumberFormat("fi-FI", {
-                      style: "currency",
-                      currency: "EUR",
-                    }).format(priceWithVat)}
-                  </span>
-                </Link>
-              </li>
+                href={`/dashboard/product/${product.id}`}
+                title={product.name}
+                rightContent={new Intl.NumberFormat("fi-FI", {
+                  style: "currency",
+                  currency: "EUR",
+                }).format(priceWithVat)}
+              />
             );
           })}
         </ul>
