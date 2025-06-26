@@ -74,7 +74,7 @@ export default function Product(props: { productId: productId }) {
           isSaving={isSaving}
         />
         {loading ? (
-          <p className="text-red-500 px-4 py-6">PRODUCT SKELETON GOES HERE</p>
+          <div>Loading...</div>
         ) : (
           product && (
             <>
