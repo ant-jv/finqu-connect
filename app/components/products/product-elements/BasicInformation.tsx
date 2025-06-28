@@ -1,6 +1,11 @@
 "use client";
 
 import type { Product } from "@/types/product";
+import dynamic from "next/dynamic";
+
+const Editor = dynamic(() => import("@/app/components/tiptap/Editor"), {
+  ssr: false,
+});
 
 type Props = {
   product: Product;
@@ -31,27 +36,49 @@ export default function BasicInformation({ product, onChange }: Props) {
               key={localeKey}
               className="flex items-center w-full relative mb-2"
             >
-              <span className="absolute left-3 text-xs text-gray-500 font-medium uppercase">
-                {localeKey}
-              </span>
-              <input
-                type="text"
-                className="w-full pl-10 pr-3 py-2 border rounded"
-                placeholder={field}
-                value={product.locales[localeKey]?.[field] || ""}
-                onChange={(e) =>
-                  onChange({
-                    ...product,
-                    locales: {
-                      ...product.locales,
-                      [localeKey]: {
-                        ...product.locales[localeKey],
-                        [field]: e.target.value,
-                      },
-                    },
-                  })
-                }
-              />
+              {field === "description" ? (
+                <>
+                  <Editor
+                    value={product.locales[localeKey]?.[field] || ""}
+                    onChange={(value: string) =>
+                      onChange({
+                        ...product,
+                        locales: {
+                          ...product.locales,
+                          [localeKey]: {
+                            ...product.locales[localeKey],
+                            [field]: value,
+                          },
+                        },
+                      })
+                    }
+                  />
+                </>
+              ) : (
+                <>
+                  <span className="absolute left-3 text-xs text-gray-500 font-medium uppercase">
+                    {localeKey}
+                  </span>
+                  <input
+                    type="text"
+                    className="w-full pl-10 pr-3 py-2 border rounded"
+                    placeholder={field}
+                    value={product.locales[localeKey]?.[field] || ""}
+                    onChange={(e) =>
+                      onChange({
+                        ...product,
+                        locales: {
+                          ...product.locales,
+                          [localeKey]: {
+                            ...product.locales[localeKey],
+                            [field]: e.target.value,
+                          },
+                        },
+                      })
+                    }
+                  />
+                </>
+              )}
             </div>
           ))}
         </div>
