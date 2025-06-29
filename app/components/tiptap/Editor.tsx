@@ -45,6 +45,45 @@ export default function Editor({ value, onChange }: EditorProps) {
         >
           I
         </button>
+        <button
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 1 }).run()
+          }
+          className={`px-3 py-1 rounded text-sm font-semibold transition-colors duration-150 ${
+            editor.isActive("heading", { level: 1 })
+              ? "bg-blue-600 text-white"
+              : "bg-white text-gray-700 hover:bg-blue-50"
+          }`}
+          aria-label="Heading 1"
+        >
+          H1
+        </button>
+        <button
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
+          className={`px-3 py-1 rounded text-sm font-semibold transition-colors duration-150 ${
+            editor.isActive("heading", { level: 2 })
+              ? "bg-blue-600 text-white"
+              : "bg-white text-gray-700 hover:bg-blue-50"
+          }`}
+          aria-label="Heading 2"
+        >
+          H2
+        </button>
+        <button
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run()
+          }
+          className={`px-3 py-1 rounded text-sm font-semibold transition-colors duration-150 ${
+            editor.isActive("heading", { level: 3 })
+              ? "bg-blue-600 text-white"
+              : "bg-white text-gray-700 hover:bg-blue-50"
+          }`}
+          aria-label="Heading 3"
+        >
+          H3
+        </button>
       </div>
 
       {/* Editable area */}

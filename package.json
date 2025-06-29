@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.9.0",
+    "@tiptap/extension-color": "^2.23.0",
     "@tiptap/pm": "^2.23.0",
     "@tiptap/react": "^2.23.0",
     "@tiptap/starter-kit": "^2.23.0",
